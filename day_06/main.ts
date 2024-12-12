@@ -18,11 +18,12 @@ const GUARD_FACES = Object.keys(GUARD_DIRECTIONS) as GuardDirection[];
 /* Day 06 - Part 01 */
 
 function part_01(input: string[]): number {
+  let unique_path_count = 1;
+
   const map = input.map((row) => row.split(""));
+  const guard_pos = getGuardPosition(map);
 
   while (true) {
-    const guard_pos = getGuardPosition(map);
-
     if (!guard_pos) break;
 
     if (!canGuardMove(map, guard_pos)) {
@@ -31,10 +32,12 @@ function part_01(input: string[]): number {
       turnGuard(map, guard_pos);
     }
 
-    if (canGuardMove(map, guard_pos)) moveGuard(map, guard_pos);
+    if (canGuardMove(map, guard_pos)) {
+      if (moveGuard(map, guard_pos)) unique_path_count++;
+    }
   }
 
-  return getVisitedPathCount(map);
+  return unique_path_count;
 }
 
 evalResult(
@@ -98,13 +101,20 @@ function isGuardOutside(map: string[][], guard_pos: GuardPosition): boolean {
   return false;
 }
 
-function moveGuard(map: string[][], guard_pos: GuardPosition): void {
+function moveGuard(map: string[][], guard_pos: GuardPosition): boolean {
   const [row, col, guard_icon, direction] = guard_pos;
   const next_position_row = row + direction[0];
   const next_position_col = col + direction[1];
 
+  const new_path = map[next_position_row][next_position_col] !== VISITED_PATH;
+
+  guard_pos[0] = next_position_row;
+  guard_pos[1] = next_position_col;
+
   map[row][col] = VISITED_PATH;
   map[next_position_row][next_position_col] = guard_icon;
+
+  return new_path;
 }
 
 function turnGuard(map: string[][], guard_pos: GuardPosition): void {
@@ -118,20 +128,4 @@ function turnGuard(map: string[][], guard_pos: GuardPosition): void {
   guard_pos[3] = GUARD_DIRECTIONS[rotated_direction];
 
   map[row][col] = rotated_direction;
-}
-
-function getVisitedPathCount(map: string[][]): number {
-  let visited_path_count = 0;
-
-  for (let row = 0; row < map.length; row++) {
-    for (let col = 0; col < map[0].length; col++) {
-      const icon = map[row][col];
-
-      if (icon === VISITED_PATH) {
-        visited_path_count++;
-      }
-    }
-  }
-
-  return visited_path_count;
 }
