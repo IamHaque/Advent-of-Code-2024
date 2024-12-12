@@ -51,11 +51,13 @@ Here’s how the magic is organized:
 │   ├── main.ts
 │   ├── sample.txt
 │   └── sample_02.txt
+│   
 ├── ...
+│   
 ├── day_[x]
 │   ├── input.txt
 │   ├── main.ts
-│   ├── sample.txt
+│   └── sample.txt
 ├── deno.json
 ├── main.ts
 ├── markdown.md
