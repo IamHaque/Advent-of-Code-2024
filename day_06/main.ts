@@ -18,10 +18,12 @@ const GUARD_FACES = Object.keys(GUARD_DIRECTIONS) as GuardDirection[];
 /* Day 06 - Part 01 */
 
 function part_01(input: string[]): number {
-  let unique_path_count = 1;
-
   const map = input.map((row) => row.split(""));
   const guard_pos = getGuardPosition(map);
+
+  if (!guard_pos) return 0;
+
+  let unique_path_count = 1;
 
   while (true) {
     if (!guard_pos) break;
@@ -48,15 +50,46 @@ evalResult(
 
 /* Day 06 - Part 02 */
 
-// function part_02(input: string[]): number {
-//   return 0;
-// }
+function part_02(input: string[]): number {
+  const map = input.map((row) => row.split(""));
+  const guard_pos = getGuardPosition(map);
 
-// evalResult(
-//   6,
-//   2,
-//   part_02,
-// );
+  if (!guard_pos) return 0;
+
+  let valid_obstacle_count = 0;
+  const potential_obstacles: number[][] = [];
+
+  while (true) {
+    if (!guard_pos) break;
+
+    if (!canGuardMove(map, guard_pos)) {
+      if (isGuardOutside(map, guard_pos)) break;
+
+      turnGuard(map, guard_pos);
+    }
+
+    if (canGuardMove(map, guard_pos)) {
+      if (moveGuard(map, guard_pos)) {
+        potential_obstacles.push([guard_pos[0], guard_pos[1]]);
+      }
+    }
+  }
+
+  for (const [row, col] of potential_obstacles) {
+    const new_map = input.map((row) => row.split(""));
+    new_map[row][col] = OBSTACLE;
+
+    if (doesGuardFormLoop(new_map)) valid_obstacle_count++;
+  }
+
+  return valid_obstacle_count;
+}
+
+evalResult(
+  6,
+  2,
+  part_02,
+);
 
 /* Shared functions */
 
@@ -128,4 +161,41 @@ function turnGuard(map: string[][], guard_pos: GuardPosition): void {
   guard_pos[3] = GUARD_DIRECTIONS[rotated_direction];
 
   map[row][col] = rotated_direction;
+}
+
+function doesGuardFormLoop(map: string[][]): boolean {
+  const guard_pos = getGuardPosition(map);
+  if (!guard_pos) return false;
+
+  const visited_positions = new Map<string, string>();
+  const initial_state = `${guard_pos[0]},${guard_pos[1]},${guard_pos[2]}`;
+  visited_positions.set(initial_state, "START");
+
+  while (true) {
+    if (!canGuardMove(map, guard_pos)) {
+      if (isGuardOutside(map, guard_pos)) break;
+      turnGuard(map, guard_pos);
+    }
+
+    if (canGuardMove(map, guard_pos)) {
+      moveGuard(map, guard_pos);
+
+      const state_key = `${guard_pos[0]},${guard_pos[1]},${guard_pos[2]}`;
+
+      if (visited_positions.has(state_key)) {
+        const previous_direction = visited_positions.get(state_key);
+
+        if (
+          previous_direction === "START" ||
+          guard_pos[2] === previous_direction
+        ) {
+          return true;
+        }
+      }
+
+      visited_positions.set(state_key, guard_pos[2]);
+    }
+  }
+
+  return false;
 }
