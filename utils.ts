@@ -1,8 +1,14 @@
 // deno-lint-ignore-file ban-types
 
-const ANSI_CYAN = [137, 221, 255];
-const ANSI_GREEN = [195, 232, 141];
-const ANSI_YELLOW = [255, 203, 107];
+const ANSI_GRAY = [70, 75, 93]; // rgb(70, 75, 93)
+const ANSI_BLACK = [0, 0, 0]; // rgb(0, 0, 0)
+const ANSI_WHITE = [255, 255, 255]; // rgb(255, 255, 255)
+const ANSI_RED = [240, 113, 120]; // rgb(240, 113, 120)
+const ANSI_BLUE = [130, 170, 255]; // rgb(130, 170, 255)
+const ANSI_GREEN = [195, 232, 141]; // rgb(195, 232, 141)
+const ANSI_CYAN = [137, 221, 255]; // rgb(137, 221, 255)
+const ANSI_YELLOW = [255, 203, 107]; // rgb(255, 203, 107)
+const ANSI_MAGENTA = [199, 146, 234]; // rgb(199, 146, 234)
 
 const parseFile = (filepath: string): string[] => {
   const data = Deno.readTextFileSync(filepath);
@@ -18,16 +24,25 @@ const showResult = (
   part: number,
   type: string,
   result: string,
+  timeTaken: number,
 ) => {
-  const dayText = coloredConsoleText(pad(day), ANSI_YELLOW);
-  const partText = coloredConsoleText(pad(part), ANSI_YELLOW);
+  const timeText = coloredConsoleText(
+    `${timeTaken.toFixed(2)}ms`,
+    timeTaken > 100 ? ANSI_RED : ANSI_GRAY,
+  );
+
+  const dayText = coloredConsoleText(`Day ${pad(day)}`, ANSI_MAGENTA);
+  const partText = coloredConsoleText(`Part ${pad(part)}`, ANSI_BLUE);
+
+  const typeText = coloredConsoleText(capitalize(type), ANSI_GRAY);
+
   const resultText = coloredConsoleText(
     result,
-    type === "sample" ? ANSI_CYAN : ANSI_GREEN,
+    type === "sample" ? ANSI_RED : ANSI_GREEN,
   );
 
   console.log(
-    `Day ${dayText} - Part ${partText} - ${capitalize(type)} : ${resultText}`,
+    `${timeText} \t|  ${dayText} - ${partText} - ${typeText} : ${resultText}`,
   );
 };
 
@@ -48,16 +63,17 @@ export const evalResult = (
   fn: Function,
   sampleSuffix = "",
 ) => {
-  showResult(
-    day,
-    part,
-    "sample",
-    fn(getInput(day, "sample" + sampleSuffix)),
-  );
-  showResult(
-    day,
-    part,
-    "input ",
-    fn(getInput(day, "input")),
-  );
+  const measureExecution = (inputType: string): [string, number] => {
+    const start = performance.now();
+    const result = fn(getInput(day, inputType));
+    const end = performance.now();
+
+    return [result, end - start];
+  };
+
+  const [sampleResult, sampleTime] = measureExecution("sample" + sampleSuffix);
+  showResult(day, part, "sample", sampleResult, sampleTime);
+
+  const [inputResult, inputTime] = measureExecution("input");
+  showResult(day, part, "input ", inputResult, inputTime);
 };
