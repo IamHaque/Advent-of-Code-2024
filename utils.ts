@@ -1,4 +1,5 @@
 // deno-lint-ignore-file ban-types
+import { basename, dirname, resolve } from "node:path";
 
 const ANSI_GRAY = [70, 75, 93]; // rgb(70, 75, 93)
 const ANSI_BLACK = [0, 0, 0]; // rgb(0, 0, 0)
@@ -15,8 +16,21 @@ const parseFile = (filepath: string): string[] => {
   return data.trim().split(/\r\n|\r|\n/);
 };
 
+const getProjectRoot = (): string => {
+  const cwd = Deno.cwd();
+  const currentFolder = basename(cwd);
+
+  if (currentFolder.match(/^day_\d+$/)) {
+    return dirname(cwd);
+  }
+
+  return cwd;
+};
+
 const getInput = (day: number, type: string): string[] => {
-  return parseFile(`./day_${pad(day)}/${type}.txt`);
+  const projectRoot = getProjectRoot();
+  const filePath = resolve(projectRoot, `day_${pad(day)}/${type}.txt`);
+  return parseFile(filePath);
 };
 
 const showResult = (
