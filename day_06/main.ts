@@ -1,16 +1,16 @@
-import { evalResult } from "../utils.ts";
+import { evalResult } from '../utils.ts';
 
-const OBSTACLE = "#";
-const VISITED_PATH = "X";
+const OBSTACLE = '#';
+const VISITED_PATH = 'X';
 const GUARD_DIRECTIONS = {
-  "^": [-1, 0],
-  ">": [0, 1],
-  "v": [1, 0],
-  "<": [0, -1],
+  '^': [-1, 0],
+  '>': [0, 1],
+  v: [1, 0],
+  '<': [0, -1],
 } as const;
 
 type GuardDirection = keyof typeof GUARD_DIRECTIONS;
-type GuardDirectionVector = typeof GUARD_DIRECTIONS[GuardDirection];
+type GuardDirectionVector = (typeof GUARD_DIRECTIONS)[GuardDirection];
 type GuardPosition = [number, number, GuardDirection, GuardDirectionVector];
 
 const GUARD_FACES = Object.keys(GUARD_DIRECTIONS) as GuardDirection[];
@@ -18,7 +18,7 @@ const GUARD_FACES = Object.keys(GUARD_DIRECTIONS) as GuardDirection[];
 /* Day 06 - Part 01 */
 
 function part_01(input: string[]): number {
-  const map = input.map((row) => row.split(""));
+  const map = input.map((row) => row.split(''));
   const guard_pos = getGuardPosition(map);
 
   if (!guard_pos) return 0;
@@ -42,16 +42,12 @@ function part_01(input: string[]): number {
   return unique_path_count;
 }
 
-evalResult(
-  6,
-  1,
-  part_01,
-);
+evalResult(6, 1, part_01);
 
 /* Day 06 - Part 02 */
 
 function part_02(input: string[]): number {
-  const map = input.map((row) => row.split(""));
+  const map = input.map((row) => row.split(''));
   const guard_pos = getGuardPosition(map);
 
   if (!guard_pos) return 0;
@@ -76,7 +72,7 @@ function part_02(input: string[]): number {
   }
 
   for (const [row, col] of potential_obstacles) {
-    const new_map = input.map((row) => row.split(""));
+    const new_map = input.map((row) => row.split(''));
     new_map[row][col] = OBSTACLE;
 
     if (doesGuardFormLoop(new_map)) valid_obstacle_count++;
@@ -85,11 +81,7 @@ function part_02(input: string[]): number {
   return valid_obstacle_count;
 }
 
-evalResult(
-  6,
-  2,
-  part_02,
-);
+evalResult(6, 2, part_02);
 
 /* Shared functions */
 
@@ -124,8 +116,10 @@ function isGuardOutside(map: string[][], guard_pos: GuardPosition): boolean {
   const next_position_col = col + direction[1];
 
   if (
-    next_position_row < 0 || next_position_row >= map.length ||
-    next_position_col < 0 || next_position_col >= map[0].length
+    next_position_row < 0 ||
+    next_position_row >= map.length ||
+    next_position_col < 0 ||
+    next_position_col >= map[0].length
   ) {
     map[row][col] = VISITED_PATH;
     return true;
@@ -153,8 +147,8 @@ function moveGuard(map: string[][], guard_pos: GuardPosition): boolean {
 function turnGuard(map: string[][], guard_pos: GuardPosition): void {
   const [row, col, guard_icon] = guard_pos;
 
-  const rotated_direction_index = (GUARD_FACES.indexOf(guard_icon) + 1) %
-    GUARD_FACES.length;
+  const rotated_direction_index =
+    (GUARD_FACES.indexOf(guard_icon) + 1) % GUARD_FACES.length;
   const rotated_direction = GUARD_FACES[rotated_direction_index];
 
   guard_pos[2] = rotated_direction;
@@ -169,7 +163,7 @@ function doesGuardFormLoop(map: string[][]): boolean {
 
   const visited_positions = new Map<string, string>();
   const initial_state = `${guard_pos[0]},${guard_pos[1]},${guard_pos[2]}`;
-  visited_positions.set(initial_state, "START");
+  visited_positions.set(initial_state, 'START');
 
   while (true) {
     if (!canGuardMove(map, guard_pos)) {
@@ -186,7 +180,7 @@ function doesGuardFormLoop(map: string[][]): boolean {
         const previous_direction = visited_positions.get(state_key);
 
         if (
-          previous_direction === "START" ||
+          previous_direction === 'START' ||
           guard_pos[2] === previous_direction
         ) {
           return true;

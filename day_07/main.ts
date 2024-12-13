@@ -1,4 +1,4 @@
-import { evalResult } from "../utils.ts";
+import { evalResult } from '../utils.ts';
 
 /* Day 07 - Part 01 */
 
@@ -6,7 +6,7 @@ function part_01(input: string[]): number {
   let calibration_result = 0;
 
   input.forEach((line) => {
-    const [a, b] = line.split(": ");
+    const [a, b] = line.split(': ');
     if (!b) return;
 
     let can_be_evaluated = false;
@@ -20,10 +20,9 @@ function part_01(input: string[]): number {
       configuration < operator_configurations;
       configuration++
     ) {
-      const operator_configuration = configuration.toString(2).padStart(
-        binaryLength,
-        "0",
-      );
+      const operator_configuration = configuration
+        .toString(2)
+        .padStart(binaryLength, '0');
 
       const result = evaluateNumbers(numbers, operator_configuration);
 
@@ -39,11 +38,7 @@ function part_01(input: string[]): number {
   return calibration_result;
 }
 
-evalResult(
-  7,
-  1,
-  part_01,
-);
+evalResult(7, 1, part_01);
 
 /* Day 07 - Part 02 */
 
@@ -51,7 +46,7 @@ function part_02(input: string[]): number {
   let calibration_result = 0;
 
   input.forEach((line) => {
-    const [a, b] = line.split(": ");
+    const [a, b] = line.split(': ');
     if (!b) return;
 
     let can_be_evaluated = false;
@@ -65,10 +60,9 @@ function part_02(input: string[]): number {
       configuration < operator_configurations;
       configuration++
     ) {
-      const operator_configuration = configuration.toString(3).padStart(
-        binaryLength,
-        "0",
-      );
+      const operator_configuration = configuration
+        .toString(3)
+        .padStart(binaryLength, '0');
 
       const result = evaluateNumbers(numbers, operator_configuration);
 
@@ -84,28 +78,24 @@ function part_02(input: string[]): number {
   return calibration_result;
 }
 
-evalResult(
-  7,
-  2,
-  part_02,
-);
+evalResult(7, 2, part_02);
 
 /* Shared functions */
 
 function evaluateNumbers(
   numbers: string[],
-  operator_configuration: string,
+  operator_configuration: string
 ): number {
   let result = Number(numbers[0]);
 
   for (let index = 1; index < numbers.length; index++) {
     const operator = operator_configuration[index - 1];
 
-    if (operator === "0") {
+    if (operator === '0') {
       result += Number(numbers[index]);
-    } else if (operator === "1") {
+    } else if (operator === '1') {
       result *= Number(numbers[index]);
-    } else if (operator === "2") {
+    } else if (operator === '2') {
       result = Number(result.toString() + numbers[index]);
     }
   }

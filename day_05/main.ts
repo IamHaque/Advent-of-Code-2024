@@ -1,4 +1,4 @@
-import { evalResult } from "../utils.ts";
+import { evalResult } from '../utils.ts';
 
 /* Day 05 - Part 01 */
 
@@ -7,11 +7,11 @@ function part_01(input: string[]): number {
   const rules = new Map<number, number[]>();
 
   input.forEach((line) => {
-    if (line.indexOf(",") >= 0) {
-      pages.push(line.split(",").map((n) => Number(n)));
+    if (line.indexOf(',') >= 0) {
+      pages.push(line.split(',').map((n) => Number(n)));
     }
-    if (line.indexOf("|") >= 0) {
-      const [a, b] = line.split("|").map((n) => Number(n));
+    if (line.indexOf('|') >= 0) {
+      const [a, b] = line.split('|').map((n) => Number(n));
       const current_b = rules.get(a) ?? [];
 
       rules.set(a, [...current_b, b]);
@@ -30,11 +30,7 @@ function part_01(input: string[]): number {
   return middle_page_sum;
 }
 
-evalResult(
-  5,
-  1,
-  part_01,
-);
+evalResult(5, 1, part_01);
 
 /* Day 05 - Part 02 */
 
@@ -43,11 +39,11 @@ function part_02(input: string[]): number {
   const rules = new Map<number, number[]>();
 
   input.forEach((line) => {
-    if (line.indexOf(",") >= 0) {
-      pages.push(line.split(",").map((n) => Number(n)));
+    if (line.indexOf(',') >= 0) {
+      pages.push(line.split(',').map((n) => Number(n)));
     }
-    if (line.indexOf("|") >= 0) {
-      const [a, b] = line.split("|").map((n) => Number(n));
+    if (line.indexOf('|') >= 0) {
+      const [a, b] = line.split('|').map((n) => Number(n));
       const current_b = rules.get(a) ?? [];
 
       rules.set(a, [...current_b, b]);
@@ -68,17 +64,13 @@ function part_02(input: string[]): number {
   return middle_page_sum;
 }
 
-evalResult(
-  5,
-  2,
-  part_02,
-);
+evalResult(5, 2, part_02);
 
 /* Shared functions */
 
 function arePagesInOrder(
   page: number[],
-  rules: Map<number, number[]>,
+  rules: Map<number, number[]>
 ): boolean {
   for (let i = 0; i < page.length - 1; i++) {
     const curr_number = page[i];
@@ -100,10 +92,7 @@ function arePagesInOrder(
   return true;
 }
 
-function reorderPages(
-  page: number[],
-  rules: Map<number, number[]>,
-): void {
+function reorderPages(page: number[], rules: Map<number, number[]>): void {
   for (let i = 0; i < page.length - 1; i++) {
     const curr_number = page[i];
     const rule_for_number = rules.get(curr_number);

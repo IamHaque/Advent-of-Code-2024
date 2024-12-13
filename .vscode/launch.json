@@ -9,12 +9,7 @@
       "cwd": "${fileDirname}",
       "env": {},
       "runtimeExecutable": "C:\\Users\\Haque\\.deno\\bin\\deno.EXE",
-      "runtimeArgs": [
-        "run",
-        "--unstable",
-        "--inspect-wait",
-        "--allow-all"
-      ],
+      "runtimeArgs": ["run", "--unstable", "--inspect-wait", "--allow-all"],
       "attachSimplePort": 9229
     }
   ]

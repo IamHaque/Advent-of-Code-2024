@@ -1,5 +1,5 @@
 // deno-lint-ignore-file ban-types
-import { basename, dirname, resolve } from "node:path";
+import { basename, dirname, resolve } from 'node:path';
 
 const ANSI_GRAY = [70, 75, 93]; // rgb(70, 75, 93)
 const ANSI_BLACK = [0, 0, 0]; // rgb(0, 0, 0)
@@ -38,11 +38,11 @@ const showResult = (
   part: number,
   type: string,
   result: string,
-  timeTaken: number,
+  timeTaken: number
 ) => {
   const timeText = coloredConsoleText(
     `${timeTaken.toFixed(2)}ms`,
-    timeTaken > 100 ? ANSI_RED : ANSI_GRAY,
+    timeTaken > 100 ? ANSI_RED : ANSI_GRAY
   );
 
   const dayText = coloredConsoleText(`Day ${pad(day)}`, ANSI_MAGENTA);
@@ -52,30 +52,28 @@ const showResult = (
 
   const resultText = coloredConsoleText(
     result,
-    type === "sample" ? ANSI_RED : ANSI_GREEN,
+    type === 'sample' ? ANSI_RED : ANSI_GREEN
   );
 
   console.log(
-    `${timeText} \t|  ${dayText} - ${partText} - ${typeText} : ${resultText}`,
+    `${timeText} \t|  ${dayText} - ${partText} - ${typeText} : ${resultText}`
   );
 };
 
 export const pad = (number: number): string =>
-  number.toString().padStart(2, "0");
+  number.toString().padStart(2, '0');
 
 const capitalize = (word: string): string =>
   word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
 
-const coloredConsoleText = (
-  text: string,
-  hex: number[],
-): string => `\x1b[38;2;${hex[0]};${hex[1]};${hex[2]}m${text}\x1b[0m`;
+const coloredConsoleText = (text: string, hex: number[]): string =>
+  `\x1b[38;2;${hex[0]};${hex[1]};${hex[2]}m${text}\x1b[0m`;
 
 export const evalResult = (
   day: number,
   part: number,
   fn: Function,
-  sampleSuffix = "",
+  sampleSuffix = ''
 ) => {
   const measureExecution = (inputType: string): [string, number] => {
     const start = performance.now();
@@ -85,9 +83,9 @@ export const evalResult = (
     return [result, end - start];
   };
 
-  const [sampleResult, sampleTime] = measureExecution("sample" + sampleSuffix);
-  showResult(day, part, "sample", sampleResult, sampleTime);
+  const [sampleResult, sampleTime] = measureExecution('sample' + sampleSuffix);
+  showResult(day, part, 'sample', sampleResult, sampleTime);
 
-  const [inputResult, inputTime] = measureExecution("input");
-  showResult(day, part, "input ", inputResult, inputTime);
+  const [inputResult, inputTime] = measureExecution('input');
+  showResult(day, part, 'input ', inputResult, inputTime);
 };

@@ -1,4 +1,4 @@
-import { evalResult } from "../utils.ts";
+import { evalResult } from '../utils.ts';
 
 /* Day 02 - Part 01 */
 
@@ -16,11 +16,7 @@ function part_01(reports: string[]): number {
   return safe_report_count;
 }
 
-evalResult(
-  2,
-  1,
-  part_01,
-);
+evalResult(2, 1, part_01);
 
 /* Day 02 - Part 02 */
 
@@ -34,9 +30,9 @@ function part_02(reports: string[]): number {
 
     if (!is_safe) {
       for (let index = 0; index < levels.length; index++) {
-        const new_levels = levels.slice(0, index).concat(
-          levels.slice(index + 1),
-        );
+        const new_levels = levels
+          .slice(0, index)
+          .concat(levels.slice(index + 1));
         is_safe = is_report_safe(new_levels);
         if (is_safe) break;
       }
@@ -50,11 +46,7 @@ function part_02(reports: string[]): number {
   return safe_report_count;
 }
 
-evalResult(
-  2,
-  2,
-  part_02,
-);
+evalResult(2, 2, part_02);
 
 /* Shared functions */
 
@@ -66,16 +58,17 @@ function is_report_safe(levels: string[]): boolean {
     const next_level = Number(levels[i + 1]);
 
     const difference = Math.abs(next_level - curr_level);
-    const direction = next_level >= curr_level ? "INC" : "DEC";
+    const direction = next_level >= curr_level ? 'INC' : 'DEC';
 
     if (is_increasing === undefined) {
-      is_increasing = direction === "INC";
+      is_increasing = direction === 'INC';
     }
 
     if (
-      difference < 1 || difference > 3 ||
-      is_increasing && direction !== "INC" ||
-      !is_increasing && direction === "INC"
+      difference < 1 ||
+      difference > 3 ||
+      (is_increasing && direction !== 'INC') ||
+      (!is_increasing && direction === 'INC')
     ) {
       return false;
     }

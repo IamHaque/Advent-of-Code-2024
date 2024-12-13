@@ -1,6 +1,6 @@
-import { evalResult } from "../utils.ts";
+import { evalResult } from '../utils.ts';
 
-const WORD = "XMAS";
+const WORD = 'XMAS';
 
 /* Day 04 - Part 01 */
 
@@ -26,11 +26,7 @@ function part_01(grid: string[]): number {
   return xmas_count;
 }
 
-evalResult(
-  4,
-  1,
-  part_01,
-);
+evalResult(4, 1, part_01);
 
 /* Day 04 - Part 02 */
 
@@ -41,7 +37,7 @@ function part_02(grid: string[]): number {
 
   for (let row = 0; row < row_count; row++) {
     for (let col = 0; col < col_count; col++) {
-      if (grid[row][col] !== "A") continue;
+      if (grid[row][col] !== 'A') continue;
 
       if (checkXMas(grid, row, col)) xmas_count++;
     }
@@ -50,12 +46,7 @@ function part_02(grid: string[]): number {
   return xmas_count;
 }
 
-evalResult(
-  4,
-  2,
-  part_02,
-  "_02",
-);
+evalResult(4, 2, part_02, '_02');
 
 /* Shared functions */
 
@@ -170,9 +161,9 @@ function checkXMas(grid: string[], row: number, col: number): boolean {
   const pattern = topLeft + topRight + bottomLeft + bottomRight;
 
   return (
-    pattern === "MSSM" ||
-    pattern === "MMSS" ||
-    pattern === "SMMS" ||
-    pattern === "SSMM"
+    pattern === 'MSSM' ||
+    pattern === 'MMSS' ||
+    pattern === 'SMMS' ||
+    pattern === 'SSMM'
   );
 }
