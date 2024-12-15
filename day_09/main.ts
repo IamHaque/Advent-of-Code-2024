@@ -47,13 +47,109 @@ evalResult(9, 1, part_01);
 
 /* Day 09 - Part 02 */
 
-// function part_02(input: string[]): number {
-//   return 0;
-// }
+function part_02(input: string[]): number {
+  let checksum = 0;
 
-// evalResult(9, 2, part_02);
+  input.forEach((line) => {
+    const memory = line.split('').map((n) => Number(n));
+    const original_memory = Array.from(memory);
+    const reordered_memory = new Map<number, Memory[]>();
+
+    reorderFreeMemoryChunk(memory, reordered_memory);
+
+    let left_sum = 0;
+
+    for (let index = 0; index < memory.length; index++) {
+      if (index > 0) left_sum += original_memory[index - 1];
+
+      if (index % 2 === 0) {
+        const id = Math.floor(index / 2);
+        const size = memory[index];
+        const right_sum = left_sum + size - 1;
+
+        if (id === 0 || size === 0) continue;
+
+        const sum_of_series = sumOfSeries(left_sum, right_sum);
+        checksum += id * sum_of_series;
+      } else if (reordered_memory.has(index)) {
+        let left_sum_extra = 0;
+        const free_memory = reordered_memory.get(index);
+
+        free_memory!.forEach(({ id, size }) => {
+          if (id === -1 || id === 0 || size === 0) return;
+
+          const sum_of_series = sumOfSeries(
+            left_sum + left_sum_extra,
+            left_sum + left_sum_extra + size - 1
+          );
+
+          checksum += id * sum_of_series;
+          left_sum_extra += size;
+        });
+      }
+    }
+  });
+
+  return checksum;
+}
+
+evalResult(9, 2, part_02);
 
 /* Shared functions */
+
+function reorderFreeMemoryChunk(
+  memory: number[],
+  reordered_memory: Map<number, Memory[]>
+): void {
+  const memory_length = memory.length;
+  const right_file_index =
+    memory_length % 2 !== 0 ? memory_length - 1 : memory_length - 2;
+
+  let left_free_index = 1;
+
+  while (left_free_index < memory_length) {
+    if (memory[left_free_index] === 0) {
+      left_free_index += 2;
+      continue;
+    }
+
+    if (!reordered_memory.has(left_free_index)) {
+      reordered_memory.set(left_free_index, [
+        { id: -1, size: memory[left_free_index] },
+      ]);
+    }
+
+    const free_memory = reordered_memory.get(left_free_index);
+    const free_memory_data = free_memory?.find(
+      (m) => m.id === -1 && m.size > 0
+    );
+
+    if (!free_memory_data) {
+      left_free_index += 2;
+      continue;
+    }
+
+    for (
+      let file_index = right_file_index;
+      file_index > left_free_index;
+      file_index -= 2
+    ) {
+      if (
+        memory[file_index] > 0 &&
+        free_memory_data.size >= memory[file_index]
+      ) {
+        free_memory_data.size -= memory[file_index];
+        free_memory!.push({
+          id: Math.floor(file_index / 2),
+          size: memory[file_index],
+        });
+        memory[file_index] = 0;
+      }
+    }
+
+    left_free_index += 2;
+  }
+}
 
 function reorderFreeMemory(
   memory: number[],
