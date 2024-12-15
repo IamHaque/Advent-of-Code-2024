@@ -8,8 +8,6 @@ type Position = {
 
 type Neighbors = Position[];
 
-const DIRECTIONS = ['UP', 'RIGHT', 'DOWN', 'LEFT'];
-
 /* Day 10 - Part 01 */
 
 function part_01(input: string[]): number {
@@ -29,7 +27,7 @@ function part_01(input: string[]): number {
 
       if (!trail_map.has(position_key)) trail_map.set(position_key, []);
 
-      traversePath(map, trail_map, position, position);
+      findTrail(map, trail_map, position, position);
     });
   });
 
@@ -43,15 +41,62 @@ evalResult(10, 1, part_01);
 
 /* Day 10 - Part 02 */
 
-// function part_02(input: string[]): number {
-//   return 0;
-// }
+function part_02(input: string[]): number {
+  const map = input.map((line) => line.split(''));
+  const trail_map = new Map<string, number>();
 
-// evalResult(10, 2, part_02);
+  map.forEach((row, row_index) => {
+    row.forEach((_, col_index) => {
+      if (row[col_index] !== '0') return;
+
+      const position = {
+        row: row_index,
+        col: col_index,
+        slope: row[col_index],
+      } as Position;
+
+      findTrailRating(map, trail_map, position, position);
+    });
+  });
+
+  return Array.from(trail_map).reduce(
+    (trail_sum, [_, trail_rating]) => trail_sum + trail_rating,
+    0
+  );
+}
+
+evalResult(10, 2, part_02);
 
 /* Shared functions */
 
-function traversePath(
+function findTrailRating(
+  map: string[][],
+  trail_map: Map<string, number>,
+  start_position: Position,
+  position: Position
+): void {
+  if (position.slope === '9') {
+    const start_position_key = getPositionKey(start_position);
+    trail_map.set(
+      start_position_key,
+      (trail_map.get(start_position_key) ?? 0) + 1
+    );
+    return;
+  }
+
+  const neighbors = getNeighbors(map, position);
+
+  for (let index = 0; index < neighbors.length; index++) {
+    const neighbour = neighbors[index];
+
+    if (neighbour.slope === '.') continue;
+    if (Number(neighbour.slope) - Number(position.slope) !== 1) continue;
+
+    findTrailRating(map, trail_map, start_position, neighbour);
+  }
+}
+
+function findTrail(
   map: string[][],
   trail_map: Map<string, string[]>,
   start_position: Position,
@@ -75,7 +120,7 @@ function traversePath(
     if (neighbour.slope === '.') continue;
     if (Number(neighbour.slope) - Number(position.slope) !== 1) continue;
 
-    traversePath(map, trail_map, start_position, neighbour);
+    findTrail(map, trail_map, start_position, neighbour);
   }
 }
 
