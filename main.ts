@@ -1,11 +1,16 @@
-import { pad } from './utils.ts';
+import { pad, coloredConsoleText } from './utils.ts';
 
 // Get the day number from the command line arguments, default to 1 if not provided
 const dayNumber = Deno.args[0] ? Number(Deno.args[0]) : 1;
 
 // Validate the day number
 if (isNaN(dayNumber) || dayNumber < 1) {
-  console.error('Please provide a valid day number (e.g., 1, 2, 3, ...).');
+  console.error(
+    coloredConsoleText(
+      'Please provide a valid day number (e.g., 1, 2, 3, ...).',
+      'RED'
+    )
+  );
   Deno.exit(1);
 }
 
@@ -25,8 +30,13 @@ try {
   if (code === 0) {
     console.log(new TextDecoder().decode(stdout));
   } else {
-    console.error(`Error: Failed to execute the script for day ${dayNumber}.`);
-    console.error(new TextDecoder().decode(stderr));
+    console.error(
+      coloredConsoleText(
+        `Error: Failed to execute the script for day ${dayNumber}.`,
+        'RED'
+      )
+    );
+    console.error(coloredConsoleText(new TextDecoder().decode(stderr), 'RED'));
     Deno.exit(1);
   }
 } catch (error) {

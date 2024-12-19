@@ -1,17 +1,46 @@
-// deno-lint-ignore-file ban-types no-unused-vars
+// deno-lint-ignore-file ban-types
 
 import { basename, dirname, resolve } from 'node:path';
 
 // Define ANSI color codes for console text
-const ANSI_GRAY = [70, 75, 93]; // rgb(70, 75, 93)
-const ANSI_BLACK = [0, 0, 0]; // rgb(0, 0, 0)
-const ANSI_WHITE = [255, 255, 255]; // rgb(255, 255, 255)
-const ANSI_RED = [240, 113, 120]; // rgb(240, 113, 120)
-const ANSI_BLUE = [130, 170, 255]; // rgb(130, 170, 255)
-const ANSI_GREEN = [195, 232, 141]; // rgb(195, 232, 141)
-const ANSI_CYAN = [137, 221, 255]; // rgb(137, 221, 255)
-const ANSI_YELLOW = [255, 203, 107]; // rgb(255, 203, 107)
-const ANSI_MAGENTA = [199, 146, 234]; // rgb(199, 146, 234)
+const ANSI_COLORS = {
+  RESET: '\x1b[0m',
+  BLACK: '\x1b[30m',
+  RED: '\x1b[31m',
+  GREEN: '\x1b[32m',
+  YELLOW: '\x1b[33m',
+  BLUE: '\x1b[34m',
+  MAGENTA: '\x1b[35m',
+  CYAN: '\x1b[36m',
+  WHITE: '\x1b[37m',
+  BRIGHT_BLACK: '\x1b[90m',
+  BRIGHT_RED: '\x1b[91m',
+  BRIGHT_GREEN: '\x1b[92m',
+  BRIGHT_YELLOW: '\x1b[93m',
+  BRIGHT_BLUE: '\x1b[94m',
+  BRIGHT_MAGENTA: '\x1b[95m',
+  BRIGHT_CYAN: '\x1b[96m',
+  BRIGHT_WHITE: '\x1b[97m',
+  BG_BLACK: '\x1b[40m',
+  BG_RED: '\x1b[41m',
+  BG_GREEN: '\x1b[42m',
+  BG_YELLOW: '\x1b[43m',
+  BG_BLUE: '\x1b[44m',
+  BG_MAGENTA: '\x1b[45m',
+  BG_CYAN: '\x1b[46m',
+  BG_WHITE: '\x1b[47m',
+  BG_BRIGHT_BLACK: '\x1b[100m',
+  BG_BRIGHT_RED: '\x1b[101m',
+  BG_BRIGHT_GREEN: '\x1b[102m',
+  BG_BRIGHT_YELLOW: '\x1b[103m',
+  BG_BRIGHT_BLUE: '\x1b[104m',
+  BG_BRIGHT_MAGENTA: '\x1b[105m',
+  BG_BRIGHT_CYAN: '\x1b[106m',
+  BG_BRIGHT_WHITE: '\x1b[107m',
+};
+
+// Define ANSI color key type for console text
+type ANSIColorKeys = keyof typeof ANSI_COLORS;
 
 // Function to read and parse a file into an array of strings
 const parseFile = (filepath: string): string[] => {
@@ -48,17 +77,17 @@ const showResult = (
 ) => {
   const timeText = coloredConsoleText(
     `${timeTaken.toFixed(2)}ms`,
-    timeTaken > 100 ? ANSI_RED : ANSI_GRAY
+    (timeTaken > 100 ? 'RED' : 'BRIGHT_BLACK') as ANSIColorKeys
   );
 
-  const dayText = coloredConsoleText(`Day ${pad(day)}`, ANSI_MAGENTA);
-  const partText = coloredConsoleText(`Part ${pad(part)}`, ANSI_BLUE);
+  const dayText = coloredConsoleText(`Day ${pad(day)}`, 'MAGENTA');
+  const partText = coloredConsoleText(`Part ${pad(part)}`, 'BLUE');
 
-  const typeText = coloredConsoleText(capitalize(type), ANSI_GRAY);
+  const typeText = coloredConsoleText(capitalize(type), 'BRIGHT_BLACK');
 
   const resultText = coloredConsoleText(
     result,
-    type === 'sample' ? ANSI_RED : ANSI_GREEN
+    type === 'sample' ? 'RED' : 'GREEN'
   );
 
   console.log(
@@ -75,8 +104,10 @@ const capitalize = (word: string): string =>
   word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
 
 // Function to colorize console text
-const coloredConsoleText = (text: string, hex: number[]): string =>
-  `\x1b[38;2;${hex[0]};${hex[1]};${hex[2]}m${text}\x1b[0m`;
+export const coloredConsoleText = (
+  text: string,
+  ansi_color: ANSIColorKeys
+): string => `${ANSI_COLORS[ansi_color]}${text}${ANSI_COLORS.RESET}`;
 
 // Function to evaluate and display the result of a function for a specific day and part
 export const evalResult = (
