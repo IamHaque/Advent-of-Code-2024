@@ -12,19 +12,10 @@ function part_01(input: string[]): number {
   for (let blink = 0; blink < BLINK_COUNT; blink++) {
     const line: number[] = [];
 
-    stones.forEach((stone) => {
-      const digit_count = stone.toString().length;
-
-      if (stone === 0) {
-        line.push(1);
-      } else if (digit_count % 2 === 0) {
-        const half_divisor = Math.pow(10, digit_count / 2);
-        line.push(Math.floor(stone / half_divisor));
-        line.push(Math.floor(stone % half_divisor));
-      } else {
-        line.push(stone * 2024);
-      }
-    });
+    for (const stone of stones) {
+      const blink_result = blinkAtStone(stone);
+      line.push(...blink_result);
+    }
 
     stones = line;
   }
@@ -36,10 +27,22 @@ evalResult(11, 1, part_01);
 
 /* Day 11 - Part 02 */
 
-// function part_02(input: string[]): number {
-//   return 0;
-// }
+function part_02(input: string[]): number {
+  return 0;
+}
 
-// evalResult(11, 2, part_02);
+evalResult(11, 2, part_02);
 
 /* Shared functions */
+
+function blinkAtStone(stone: number): number[] {
+  if (stone === 0) return [1];
+
+  const digit_count = stone.toString().length;
+  if (digit_count % 2 === 0) {
+    const half_divisor = Math.pow(10, digit_count / 2);
+    return [Math.floor(stone / half_divisor), Math.floor(stone % half_divisor)];
+  }
+
+  return [stone * 2024];
+}
