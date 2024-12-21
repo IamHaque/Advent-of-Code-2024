@@ -45,7 +45,33 @@ evalResult(13, 1, part_01);
 /* Day 13 - Part 02 */
 
 function part_02(input: string[]): number {
-  return 0;
+  let tokens_spent = 0;
+  const machines = parseInput(input);
+
+  machines.forEach((machine) => {
+    const [button_a_X, button_a_Y] = machine['Button A']!;
+    const [button_b_X, button_b_Y] = machine['Button B']!;
+
+    const prize_X = machine['Prize']![0] + 10000000000000;
+    const prize_Y = machine['Prize']![1] + 10000000000000;
+
+    // S = (Px - Bx . T) / Ax
+    // T = (Ax . Py - Ay . Px) / (Ax . By - Ay . Bx)
+
+    const button_b_count =
+      (button_a_X * prize_Y - button_a_Y * prize_X) /
+      (button_a_X * button_b_Y - button_a_Y * button_b_X);
+
+    if (button_b_count % 1 !== 0) return;
+
+    const button_a_count = (prize_X - button_b_X * button_b_count) / button_a_X;
+
+    if (button_a_count % 1 !== 0) return;
+
+    tokens_spent += 3 * button_a_count + button_b_count;
+  });
+
+  return tokens_spent;
 }
 
 evalResult(13, 2, part_02);
