@@ -46,7 +46,55 @@ evalResult(14, 1, part_01);
 /* Day 14 - Part 02 */
 
 function part_02(input: string[]): number {
-  return 0;
+  const WIDTH = input.length > 12 ? 101 : 11;
+  const HEIGHT = input.length > 12 ? 103 : 7;
+
+  let second = 0;
+  const robots: Robot[] = input.map(extractRobotData);
+
+  for (; second < TIME_LIMIT * TIME_LIMIT; second++) {
+    const robots_counts = {
+      vertical: new Map<number, number>(),
+      horizontal: new Map<number, number>(),
+    };
+
+    robots.forEach((robot) => {
+      const new_x = (robot.x + robot.vx) % WIDTH;
+      const new_y = (robot.y + robot.vy) % HEIGHT;
+
+      robot.x = checkAndTeleportRobot(new_x, WIDTH);
+      robot.y = checkAndTeleportRobot(new_y, HEIGHT);
+
+      robots_counts.vertical.set(
+        robot.x,
+        (robots_counts.vertical.get(robot.x) ?? 0) + 1
+      );
+      robots_counts.horizontal.set(
+        robot.y,
+        (robots_counts.horizontal.get(robot.y) ?? 0) + 1
+      );
+    });
+
+    const sortedVerticalCounts = Array.from(
+      robots_counts.vertical.entries()
+    ).sort((a, b) => b[1] - a[1]);
+
+    const sortedHorizontalCounts = Array.from(
+      robots_counts.horizontal.entries()
+    ).sort((a, b) => b[1] - a[1]);
+
+    const v1 = sortedVerticalCounts[0][1];
+    const v2 = sortedVerticalCounts[1][1];
+    const h1 = sortedHorizontalCounts[1][1];
+    const h2 = sortedHorizontalCounts[0][1];
+
+    if (v1 > 30 && v2 > 30 && h1 > 30 && h2 > 30) {
+      second++;
+      break;
+    }
+  }
+
+  return second;
 }
 
 evalResult(14, 2, part_02);
