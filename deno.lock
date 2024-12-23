@@ -1,0 +1,8 @@
+{
+  "version": "4",
+  "remote": {
+    "https://deno.land/x/collections@0.12.1/binary_heap.ts": "eff2e3379e942c1dcb8f231f97e0631404090364b58e3f998b26bfddb15bf287",
+    "https://deno.land/x/collections@0.12.1/common.ts": "599e204a14953ea70f45393297a8b9c2f2ae19965499af88a60807cec3d5a599",
+    "https://deno.land/x/collections@0.12.1/comparators.ts": "bf94763e6e4f77e8dff509975eceeb7af4cbbe1cbc52df02d344bf3222fd46be"
+  }
+}
