@@ -2,6 +2,13 @@ import { evalResult } from '../utils.ts';
 
 type Point = [number, number];
 
+const DIRECTIONS = [
+  [-1, 0], // UP
+  [0, 1], // RIGHT
+  [1, 0], // DOWN
+  [0, -1], // LEFT
+];
+
 /* Day 20 - Part 01 */
 
 function part_01(input: string[]): number {
@@ -11,7 +18,7 @@ function part_01(input: string[]): number {
   const path = bfs(grid, start, end);
   if (path.length === 0) return 0;
 
-  return getCheatsCount(path, grid);
+  return getCheatsCount(grid, path);
 }
 
 evalResult(20, 1, part_01);
@@ -19,7 +26,13 @@ evalResult(20, 1, part_01);
 /* Day 20 - Part 02 */
 
 function part_02(input: string[]): number {
-  return 0;
+  const { grid, end, start } = parseInput(input);
+  if (!start || !end) return 0;
+
+  const path = bfs(grid, start, end);
+  if (path.length === 0) return 0;
+
+  return getExtendedCheatsCount(path);
 }
 
 evalResult(20, 2, part_02);
@@ -54,13 +67,7 @@ function bfs(grid: string[][], start: Point, end: Point): Point[] {
   const visited = new Set<string>();
   const queue: Point[][] = [];
   queue.push([start]);
-
-  const directions = [
-    [-1, 0], // UP
-    [0, 1], // RIGHT
-    [1, 0], // DOWN
-    [0, -1], // LEFT
-  ];
+  visited.add(`${start[0]},${start[1]}`);
 
   while (queue.length > 0) {
     const path = queue.shift()!;
@@ -70,7 +77,7 @@ function bfs(grid: string[][], start: Point, end: Point): Point[] {
       return path;
     }
 
-    for (const [dr, dc] of directions) {
+    for (const [dr, dc] of DIRECTIONS) {
       const nr = r + dr;
       const nc = c + dc;
 
@@ -87,14 +94,14 @@ function bfs(grid: string[][], start: Point, end: Point): Point[] {
       const new_path = Array.from(path);
       new_path.push([nr, nc]);
       queue.push(new_path);
-      visited.add(`${r},${c}`);
+      visited.add(`${nr},${nc}`);
     }
   }
 
   return [];
 }
 
-function getCheatsCount(path: Point[], grid: string[][]): number {
+function getCheatsCount(grid: string[][], path: Point[]): number {
   let cheats_count = 0;
   const min_cheat_time = 100;
 
@@ -115,6 +122,30 @@ function getCheatsCount(path: Point[], grid: string[][]): number {
       const mr = r + dr / 2;
       const mc = c + dc / 2;
       if (grid[mr][mc] !== '#') continue;
+
+      cheats_count++;
+    }
+  }
+
+  return cheats_count;
+}
+
+function getExtendedCheatsCount(path: Point[]): number {
+  let cheats_count = 0;
+  const min_cheat_time = 100;
+
+  for (let i = 0; i < path.length - 1; i++) {
+    const [r, c] = path[i];
+
+    for (let j = i + min_cheat_time; j < path.length; j++) {
+      const [nr, nc] = path[j];
+      const v = Math.abs(nr - r);
+      const h = Math.abs(nc - c);
+
+      if (v + h > 20) continue;
+
+      const time_saved = j - i - v - h;
+      if (time_saved < min_cheat_time) continue;
 
       cheats_count++;
     }
