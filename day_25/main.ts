@@ -13,14 +13,14 @@ function part_01(input: string[]): number {
   for (const key of keys) {
     for (const lock of locks) {
       let does_overlap = false;
-      
+
       for (let c = 0; c < key.length; c++) {
         if (key[c] + lock[c] > 5) {
           does_overlap = true;
           break;
         }
       }
-      
+
       if (!does_overlap) {
         valid_pairs++;
       }
@@ -31,14 +31,6 @@ function part_01(input: string[]): number {
 }
 
 evalResult(25, 1, part_01);
-
-/* Day 25 - Part 02 */
-
-function part_02(input: string[]): number {
-  return 0;
-}
-
-evalResult(25, 2, part_02);
 
 /* Shared functions */
 
